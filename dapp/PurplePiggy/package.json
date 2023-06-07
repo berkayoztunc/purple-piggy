@@ -1,0 +1,30 @@
+{
+  "name": "purplepiggy",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.27.0",
+    "@soerenmartius/vue3-clipboard": "^0.1.2",
+    "@solana/pay": "^0.2.5",
+    "@solana/wallet-adapter-wallets": "^0.19.16",
+    "autoprefixer": "^10.4.14",
+    "daisyui": "^3.0.3",
+    "postcss": "^8.4.24",
+    "solana-wallets-vue": "^0.6.0",
+    "vue": "^3.2.47",
+    "vue3-clipboard": "^1.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.1.0",
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.9",
+    "vue-tsc": "^1.4.2"
+  }
+}

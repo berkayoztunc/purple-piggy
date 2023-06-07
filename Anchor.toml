@@ -1,0 +1,15 @@
+[features]
+seeds = false
+skip-lint = false
+[programs.devnet]
+purple_piggy = "FZaN7Fs58eKPa6NJ93EeKt1j5x6ZUcCAGsKif7mgeWaZ"
+
+[registry]
+url = "https://silent-wandering-waterfall.solana-devnet.discover.quiknode.pro/d9fe53c70fb688d6765599eb816fcac0f36da2d6/"
+
+[provider]
+cluster = "devnet"
+wallet = "/home/forge/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
