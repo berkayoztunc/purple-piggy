@@ -1,5 +1,7 @@
 
 
+[logo]: https://github.com/berkayoztunc/purple-piggy/raw/master/tutorials/logo.png "Logo Title Text 2"
+
 # Purple Piggy
 Purple Piggy is a Solana program that allows users to create and manage vaults. A vault is a collection of funds that can be shared by multiple users.
 

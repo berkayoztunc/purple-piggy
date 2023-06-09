@@ -10,37 +10,54 @@ configDotenv();
 describe("purple-piggy", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
   /**
-   * h
    * System accounts constant for test
    */
-  const pair = JSON.parse(process.env.PRIVATE_KEY);
+
+  // Parse the private keys for the vault owner and persons from environment variables
+
+  const pair = JSON.parse(process.env.VAULT_OWNER_KEY);
   const pair_person_1 = JSON.parse(process.env.PERSON_1_KEY);
   const pair_person_2 = JSON.parse(process.env.PERSON_2_KEY);
+  // Create keypairs for the vault owner and persons
+
   const vaultOwner = anchor.web3.Keypair.fromSecretKey(Buffer.from(pair));
   const person1 = anchor.web3.Keypair.fromSecretKey(Buffer.from(pair_person_1));
   const person2 = anchor.web3.Keypair.fromSecretKey(Buffer.from(pair_person_2));
+  // Configuration flags and constants
+
   const PDAwillDeleteAfterTest = true;
-  const sendSomeLamportToPersons = false;
+  const sendSomeLamportToPersons = true;
   const personAirdropLamports = LAMPORTS_PER_SOL / 100;
   const poolDepositeLamports = LAMPORTS_PER_SOL / 100;
+  // Configuration flags and constants
+
   const program = anchor.workspace.PurplePiggy as Program<PurplePiggy>;
   const programProvider = program.provider as anchor.AnchorProvider;
   const programID = anchor.workspace.PurplePiggy.programId;
+  // Constants for PDA and vault name
+
   const seedForPDA = "vault";
   const vaultName = "Awesome Vault";
 
+  // Function to calculate and return the Program Derived Address (PDA) for the vault
   async function handlePDA() {
     const [vault, bump] = await anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from(seedForPDA),Buffer.from(vaultName), vaultOwner.publicKey.toBytes()],
+      [
+        Buffer.from(seedForPDA),
+        Buffer.from(vaultName),
+        vaultOwner.publicKey.toBytes(),
+      ],
       programID
     );
     return vault;
   }
+  // Function to get the balance of a Solana address
   async function getBalanceOfAddress(address: anchor.web3.PublicKey) {
     const balance = await program.provider.connection.getBalance(address);
     return balance;
   }
 
+  // Function to simulate a person claiming funds from the vault
   async function personClaim(person: anchor.web3.Keypair, pda) {
     await program.methods
       .claim()
@@ -53,6 +70,7 @@ describe("purple-piggy", () => {
       .rpc();
   }
 
+  // If sendSomeLamportToPersons flag is set, transfer lamports from vaultOwner to person1 and person2
   if (sendSomeLamportToPersons) {
     it("Ready to perseon sol", async () => {
       var transaction = new anchor.web3.Transaction().add(
@@ -74,6 +92,7 @@ describe("purple-piggy", () => {
       );
     });
   }
+  // Test case: Check if the vault is initialized correctly
   it("Is initialized!", async () => {
     const pda = await handlePDA();
     const percentages: anchor.BN[] = [50, 50].map(
@@ -100,6 +119,8 @@ describe("purple-piggy", () => {
     assert(vaultAccount.accounts[0].equals(person1.publicKey));
     assert(vaultAccount.accounts[1].equals(person2.publicKey));
   });
+
+  // Test case: Deposit sol into the vault
   it("Deposite sol in vault", async () => {
     const pda = await handlePDA();
     const amount = new anchor.BN(poolDepositeLamports);
@@ -117,7 +138,8 @@ describe("purple-piggy", () => {
     assert(vaultAccount.accountsVault[0].eq(amount.div(new anchor.BN(2))));
     assert(vaultAccount.accountsVault[1].eq(amount.div(new anchor.BN(2))));
   });
-  it("Can claim person 1", async () => {
+  // Test case: Person 1 claims funds from the vault
+  it("Person 1 claims", async () => {
     const pda = await handlePDA();
     const startBalance = await getBalanceOfAddress(person1.publicKey);
     await personClaim(person1, pda);
@@ -126,7 +148,9 @@ describe("purple-piggy", () => {
     assert(endBalance > startBalance);
     assert(vaultAccount.accountsVault[0].eq(new anchor.BN(0)));
   });
-  it("Can claim person 2", async () => {
+  // Test case: Person 2 claims funds from the vault
+
+  it("Person 2 claims", async () => {
     const pda = await handlePDA();
     const startBalance = await getBalanceOfAddress(person2.publicKey);
 
@@ -136,6 +160,7 @@ describe("purple-piggy", () => {
     assert(endBalance > startBalance);
     assert(vaultAccount.accountsVault[1].eq(new anchor.BN(0)));
   });
+  // Test case: A random person cannot claim funds from the vault
   it("Random person cant claim", async () => {
     const pda = await handlePDA();
     const randomPerson = anchor.web3.Keypair.generate();
@@ -154,6 +179,7 @@ describe("purple-piggy", () => {
       assert.ok(error.message.includes("Unauthorized"));
     }
   });
+  // Test case: Update the vault's percentages
   it("Update vault", async () => {
     const pda = await handlePDA();
     const percentages: anchor.BN[] = [25, 75].map(
@@ -186,9 +212,16 @@ describe("purple-piggy", () => {
       .rpc();
     const vaultAccount = await program.account.vault.fetch(pda);
     assert(vaultAccount.total.eq(amount));
-    assert(vaultAccount.accountsVault[0].eq(amount.mul(new anchor.BN(25)).div(new anchor.BN(100))));
-    assert(vaultAccount.accountsVault[1].eq(amount.mul(new anchor.BN(75)).div(new anchor.BN(100))));
-    
+    assert(
+      vaultAccount.accountsVault[0].eq(
+        amount.mul(new anchor.BN(25)).div(new anchor.BN(100))
+      )
+    );
+    assert(
+      vaultAccount.accountsVault[1].eq(
+        amount.mul(new anchor.BN(75)).div(new anchor.BN(100))
+      )
+    );
   });
   it("after update Can claim person 1", async () => {
     const pda = await handlePDA();
@@ -210,6 +243,7 @@ describe("purple-piggy", () => {
     assert(vaultAccount.accountsVault[1].eq(new anchor.BN(0)));
   });
   if (PDAwillDeleteAfterTest) {
+    // Clean up: Delete the vault account if flag is set
     it("delete vault", async () => {
       const pda = await handlePDA();
 

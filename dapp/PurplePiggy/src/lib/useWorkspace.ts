@@ -43,8 +43,6 @@ export const initWorkspace = () => {
         return vault;
     };
     const formatThePubkey = (pubkey:PublicKey) => {
-        // EgJVwJN5enK7h74cdAKFogEYNCH1va9eWPzLZSZRNutH
-        // EgJVwJN5e........................PzLZSZRNutH
         const pubkeyStr = pubkey.toString();
         const pubkeyStrLength = pubkeyStr.length;
         const pubkeyStrFirst = pubkeyStr.slice(0, 5);
