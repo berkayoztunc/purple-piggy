@@ -16,6 +16,7 @@
     "@solana/pay": "^0.2.5",
     "@solana/wallet-adapter-wallets": "^0.19.16",
     "autoprefixer": "^10.4.14",
+    "buffer": "^6.0.3",
     "daisyui": "^3.0.3",
     "postcss": "^8.4.24",
     "rollup-plugin-node-polyfills": "^0.2.1",

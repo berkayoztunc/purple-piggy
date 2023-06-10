@@ -1,10 +1,21 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
+// Declare the program's ID to use in the program. You should generate a new one
 declare_id!("FZaN7Fs58eKPa6NJ93EeKt1j5x6ZUcCAGsKif7mgeWaZ");
+
+/*
+ * The Purple Piggy program
+ * This program allows users to create a vault and deposit money into it
+ * The money is then distributed to the vault's accounts based on the percentages provided
+ * The vault can be updated and deleted by the vault's authority
+ * The vault's accounts can claim their money from the vault
+ * The vault's authority can claim the remaining money from the vault
+ */
 #[program]
 mod purple_piggy {
     use super::*;
+    /// Create a vault
     pub fn initialize(
         ctx: Context<CreateVault>, // Function context containing accounts and other information
         name: String,              // Name of the vault
@@ -53,6 +64,7 @@ mod purple_piggy {
         Ok(()) // Return Ok indicating successful execution of the function
     }
 
+    /// Update the vault's percentage values
     #[access_control(UpdateVault::accounts(&ctx))]
     pub fn update(
         ctx: Context<UpdateVault>, // Function context containing accounts and other information
@@ -85,6 +97,7 @@ mod purple_piggy {
         Ok(()) // Return Ok indicating successful execution of the function
     }
 
+    /// Delete the vault and return the remaining money to the authority
     #[access_control(UpdateVault::accounts(&ctx))]
     pub fn delete(ctx: Context<UpdateVault>) -> Result<()> {
         let vault = &mut ctx.accounts.vault; // Get a mutable reference to the vault account
@@ -121,11 +134,12 @@ mod purple_piggy {
 
         vault.accounts_vault = vec; // Update the vault's account vaults with the calculated values
 
+        // Create a CPI context to transfer the deposited lamports from the authority account to the vault account
         let cpi_context = CpiContext::new(
             ctx.accounts.system_program.to_account_info(),
             system_program::Transfer {
-                from: ctx.accounts.authority.to_account_info().clone(),
-                to: vault.to_account_info().clone(),
+                from: ctx.accounts.authority.to_account_info().clone(), // Authority account
+                to: vault.to_account_info().clone(),                    // Vault account
             },
         );
 
@@ -143,6 +157,7 @@ mod purple_piggy {
         let vault = &mut ctx.accounts.vault; // Get a mutable reference to the vault account
         let vault_balance = vault.total; // Get the current balance of the vault
 
+        // Check if the vault balance is 0
         if vault_balance == 0 {
             return Err(ErrorCode::Unauthorized.into());
         }
@@ -164,7 +179,7 @@ mod purple_piggy {
                     msg!("Claim successfully. Total: {}", vault.total);
                 }
 
-                return Ok(());
+                return Ok(()); // Return Ok indicating successful execution of the function
             }
         }
 
@@ -172,9 +187,13 @@ mod purple_piggy {
     }
 }
 
+/// Instruction to create a vault with a specified name and percentages.
+
 #[derive(Accounts)]
 #[instruction(name: String,percentage: Vec<u64>)]
 pub struct CreateVault<'info> {
+    /// The newly created vault account.
+
     #[account(init,
         payer=authority,
         space = 8 + CreateVault::space(&name,percentage),
@@ -185,8 +204,11 @@ pub struct CreateVault<'info> {
         ],
         bump)]
     pub vault: Account<'info, Vault>,
+
+    /// The authority signing the transaction.
     #[account(mut)]
     pub authority: Signer<'info>,
+    /// The system program account.
     pub system_program: Program<'info, System>,
 }
 
@@ -194,40 +216,73 @@ pub struct CreateVault<'info> {
 pub struct UpdateVault<'info> {
     #[account(mut, has_one=authority @ ErrorCode::WrongOwner)]
     pub vault: Account<'info, Vault>,
+    /// The authority signing the transaction.
+
     #[account(mut)]
     pub authority: Signer<'info>,
+    /// The system program account.
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct Deposite<'info> {
+    /// PDA account to deposit to.
     #[account(mut)]
     pub vault: Account<'info, Vault>,
+    /// The authority signing the transaction.
     #[account(mut)]
     pub authority: Signer<'info>,
+    /// The system program account.
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct ClaimVault<'info> {
+    /// PDA account to claim to.
     #[account(mut)]
     pub vault: Account<'info, Vault>,
+
+    /// The authority signing the transaction. these time its different from the authority of the vault.
     #[account(mut)]
     pub claimer: Signer<'info>,
+    /// The system program account.
     pub system_program: Program<'info, System>,
 }
 
+/// Represents a vault account.
 #[account]
 pub struct Vault {
+    /// The name of the vault.
     pub name: String,
+
+    /// The public key of the authority controlling the vault.
     pub authority: Pubkey,
+
+    /// The total balance of the vault.
     pub total: u64,
+
+    /// The percentages associated with each account in the vault.
     pub percentages: Vec<u64>,
+
+    /// The balances of each account in the vault.
     pub accounts_vault: Vec<u64>,
+
+    /// The account public keys associated with the vault.
     pub accounts: Vec<Pubkey>,
 }
 
 impl CreateVault<'_> {
+    /// Calculates the required account space for creating a vault.
+    ///
+    /// # Arguments
+    ///
+    /// * `name`: The name of the vault.
+    /// * `acct`: The percentages associated with each account in the vault.
+    ///
+    /// # Returns
+    ///
+    /// The total account space required for the vault.
+    ///
     fn space(name: &str, acct: Vec<u64>) -> usize {
         let name_len = name.len() as usize;
         let accounts_len = acct.len();
@@ -244,16 +299,6 @@ impl CreateVault<'_> {
             + accounts_vault_size
             + accounts_size
     }
-}
-// Error handling
-#[error_code]
-pub enum ErrorCode {
-    #[msg("Sum of percentages must be 100")]
-    SumPercentages,
-    #[msg("Unauthorized")]
-    Unauthorized,
-    #[msg("Wrong Owner")]
-    WrongOwner,
 }
 
 impl UpdateVault<'_> {
@@ -284,4 +329,15 @@ fn name_seed(name: &str) -> &[u8] {
     } else {
         b // Otherwise, return `b` as is
     }
+}
+
+// Error handling
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Sum of percentages must be 100")]
+    SumPercentages,
+    #[msg("Unauthorized")]
+    Unauthorized,
+    #[msg("Wrong Owner")]
+    WrongOwner,
 }

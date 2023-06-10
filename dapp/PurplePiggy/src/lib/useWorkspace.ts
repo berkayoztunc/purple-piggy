@@ -2,7 +2,10 @@ import { ComputedRef, computed } from "vue";
 import { useAnchorWallet } from "solana-wallets-vue";
 import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
 import { AnchorProvider, Program, Wallet } from "@project-serum/anchor";
+
 import { IDL } from "./idl.js";
+import { Buffer } from 'buffer';
+
 const preflightCommitment = "processed";
 const commitment = "confirmed";
 
