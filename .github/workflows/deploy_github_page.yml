@@ -30,16 +30,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Navigate Frontend folder
-        run: cd dapp/PurplePiggy
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
       - name: Install dependencies
+        working-directory: ./dapp/PurplePiggy
         run: npm install
       - name: Build
+        working-directory: ./dapp/PurplePiggy
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload dist repository
-          path: './dist'
+          path: './dapp/PurplePiggy/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
