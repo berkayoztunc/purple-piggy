@@ -6,5 +6,12 @@ export default defineConfig({
   plugins: [vue()],
   define: {
     'process.env': {}
-  }
+  },
+  build: {
+    rollupOptions: {
+      external: [
+        'project-serum/anchor'
+      ],
+    },
+  },
 })
