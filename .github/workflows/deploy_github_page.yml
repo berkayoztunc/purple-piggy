@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-     - name: Navigate Frontend
+      - name: Navigate Frontend folder
         run: cd dapp/PurplePiggy
       - name: Set up Node
         uses: actions/setup-node@v3
