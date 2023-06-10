@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.27.0",
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@project-serum/anchor": "^0.26.0",
     "@soerenmartius/vue3-clipboard": "^0.1.2",
     "@solana/pay": "^0.2.5",
@@ -17,6 +18,7 @@
     "autoprefixer": "^10.4.14",
     "daisyui": "^3.0.3",
     "postcss": "^8.4.24",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "solana-wallets-vue": "^0.6.0",
     "vue": "^3.2.47",
     "vue3-clipboard": "^1.0.0"
