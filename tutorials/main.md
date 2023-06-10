@@ -46,6 +46,7 @@ Bir bağış, ödeme veya ortak birikim yaparken, güven odaklı para dağılım
 Solana superteamtr bir bounty yayınladı ve bu bounty de bir tutorial yapılarak ödül kazanılma durumu söz konusu. PurplePiggy(bizim örnek programın adı) ile 4 farklı developer %25 olucak şekilde bir kumbara oluşturuyoruz, olurda etkinliği kazanırsak, ödül bu kumbaraya yatırılıyor ve tüm geliştiriciler başlangıçta belirledikde orana göre kumbaradan paralarını alabiliyorlar 🥳 örnek aşırı gerçekçi bu arada. Micro ölçekli örneği bu ama bunu geniş ölçekli bir alanda işletmelerin gelirlerini kırılımlamalarını da bu sayede sağlayabilirsiniz. 
 
 Evet sanırım yapıcağımız örneğe biraz hakim oldunuz o zaman hemen sistemi adım adım geliştirdiğimize geçelim
-
+1.  
+2. 
 
 
