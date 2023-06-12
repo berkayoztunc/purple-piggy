@@ -1,0 +1,17 @@
+{
+  "name": "Solana Anchor Dev Container",
+  "dockerFile": "Dockerfile",
+  "extensions": [
+    "rust-lang.rust",
+    "serundeputy.vscode-solana-snippets",
+    "cschleiden.vscode-github-actions",
+    "ms-vsliveshare.vsliveshare",
+    "matklad.rust-analyzer",
+    "serayuzgur.crates",
+    "vadimcn.vscode-lldb"
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "terminal.integrated.shell.linux": "/bin/bash",
+  }
+}
