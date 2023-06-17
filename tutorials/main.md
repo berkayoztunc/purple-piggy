@@ -8,6 +8,14 @@ Selam herkeze, internet de genelde örnekler arasında 100% döngüyü sağlayan
 
 ## Başlamadan önce gereksinimler 
 Eğitime başlamadan önce bir çok yazılım vs kurmanız gerekmekte ama ben bunuda biraz kolaylaştırmak adına bazı öneriler ekledim.
+
+
+### Dev container 
+anchor solana ve nodejs içeren bir dev container oluşturdum. dev container içinde solana cli wallet'ı yeniden oluşturmanız gerekmekte.
+
+Dev container detayaları için [burada](https://github.com/berkayoztunc/anchor-dev-container) link adresinden nasıl kurulacağını öğrenebilirsiniz. Bu proje içinde kurulu sadece docker komutlarını çalıştırmanız yeterli. 
+
+
 Kurulumlu gereksinimler
 ide
 https://medium.com/nerd-for-tech/install-visual-studio-code-fe3908c5cf15
